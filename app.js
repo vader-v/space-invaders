@@ -108,6 +108,11 @@ function animate() {
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
   projectiles.forEach(projectile => {
+    if (projectile.position.y + projectile.radius <= 0) {
+      setTimeout(() => {
+      projectiles.splice(projectiles.indexOf(projectile), 1);
+      }, 0);
+    }
     projectile.update();
   });
 
@@ -145,7 +150,7 @@ addEventListener('keydown', ({key}) => {
         },
           velocity: {
             x: 0,
-            y: -5
+            y: -8
           } 
         }
       ));
@@ -157,16 +162,18 @@ addEventListener('keydown', ({key}) => {
 addEventListener('keyup', ({key}) => {
   switch (key) {
     case 'a':
-      console.log('left');
+      // console.log('left');
       keys.a.pressed = false;
       break;
     case 'd':
-      console.log('right');
+      // console.log('right');
       keys.d.pressed = false;
       break;
     case ' ':
-      console.log('shoot');
+      // console.log('shoot');
       keys.space.pressed = false;
+
+      // console.log(projectiles);
       break;
   }
 });
