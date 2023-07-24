@@ -67,7 +67,7 @@ class Projectile {
   constructor({ position, velocity }) {
     this.position = position
     this.velocity = velocity;
-    this.radius = 3;
+    this.radius = 4;
   }
 
   draw() {
@@ -151,8 +151,8 @@ class Grid {
       this.invaders.push(
           new Invader({
             position: {
-              x: x * 40,
-              y: y * 40
+              x: x * 30,
+              y: y * 30
             }
           })
         )
@@ -220,39 +220,27 @@ function animate() {
       grid.invaders.forEach((invader, i) => {
         invader.update({velocity: grid.velocity});
         projectiles.forEach((projectile, j) => {
-          const distance = Math.hypot(
-            invader.position.x - projectile.position.x,
-            invader.position.y - projectile.position.y
-          );
-          if (distance - invader.width / 2 - projectile.radius < 1) {
+          if(projectile.position.y - projectile.radius <= invader.position.y + invader.height &&
+            projectile.position.x + projectile.radius >= invader.position.x &&
+            projectile.position.x - projectile.radius <= invader.position.x + invader.width &&
+            projectile.position.y + projectile.radius >= invader.position.y
+            ) {
             setTimeout(() => {
-              const invaderFound = grid.invaders.find(invader2 => 
-                invader2 === invader
-              )
-              const projectileFound = projectiles.find(projectile2 => {
-                return projectile2 === projectile;
+              const invaderFound = grid.invaders.find(
+                (invader2) => invader2 === invader
+              );
+              const projectileFound = projectiles.find(
+                (projectile2) => projectile2 === projectile
+              );
 
-              })
               if (invaderFound && projectileFound) {
-
+                console.log('found');
                 grid.invaders.splice(i, 1);
                 projectiles.splice(j, 1);
               }
-              if (grid.invaders.length > 0) {
-                let minX = grid.invaders[0].position.x;
-                let maxX = grid.invaders[0].position.x;
-          
-                grid.invaders.forEach(invader => {
-                  if (invader.position.x < minX) minX = invader.position.x;
-                  if (invader.position.x > maxX) maxX = invader.position.x;
-                });
-          
-                grid.width = maxX - minX + grid.invaders[0].width;
-              }
             }, 0);
           }
-        }
-      );
+        });
     });
   });
 
