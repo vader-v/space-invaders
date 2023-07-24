@@ -151,8 +151,8 @@ class Grid {
       this.invaders.push(
           new Invader({
             position: {
-              x: x * 50,
-              y: y * 50
+              x: x * 40,
+              y: y * 40
             }
           })
         )
@@ -174,7 +174,7 @@ class Grid {
 
 const player = new Player();
 const projectiles = [];
-const grids = [new Grid()]
+const grids = []
 
 const keys = {
   a: {
@@ -188,6 +188,10 @@ const keys = {
   }
 };
 
+let frames = 0;
+let randomInterval = Math.floor(Math.random() * 500) + 500;
+
+console.log(randomInterval);
 function animate() {
   requestAnimationFrame(animate);
   c.fillStyle = 'black';
@@ -221,6 +225,14 @@ function animate() {
     player.velocity.x = 0;
     player.rotation = 0;
   }
+  console.log(frames);
+
+  if (frames % randomInterval === 0) {
+    grids.push(new Grid());
+    randomInterval = Math.floor(Math.random() * 500) + 500;
+    console.log(randomInterval, 'randomInterval');
+  }
+frames++;
 }
 
 animate();
