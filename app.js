@@ -218,26 +218,32 @@ class Grid {
   }
 
 class Particle {
-  constructor({ position, velocity, radius, color, gravity }) {
+  constructor({ position, velocity, radius, color }) {
     this.position = position
-    this.velocity = velocity;
+    this.velocity = velocity
 
     this.radius = radius
     this.color = color
+    this.opacity = 1
   }
 
   draw() {
+    c.save();
+    c.globalAlpha = this.opacity;
     c.beginPath();
     c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
     c.fillStyle = this.color;
     c.fill()
     c.closePath();
+    c.restore();
   }
 
   update() {
     this.draw();
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
+
+    this.opacity -= 0.01;
   }
 }
 
@@ -269,7 +275,7 @@ function animate() {
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
   particles.forEach((particle, index) => {
-    if (particle.alpha <= 0) {
+    if (particle.opacity <= 0) {
       setTimeout(() => {
       particles.splice(index, 1);
       }, 0);
@@ -312,21 +318,6 @@ function animate() {
             projectile.position.x - projectile.radius <= invader.position.x + invader.width &&
             projectile.position.y + projectile.radius >= invader.position.y
             ) {
-              for (let i = 0; i < 15; i++) {
-                particles.push(new Particle({
-                  position: {
-                    x: invader.position.x + invader.width / 2,
-                    y: invader.position.y + invader.height / 2
-                  },
-                  velocity: {
-                    x: 2,
-                    y: 2
-                  },
-                  radius: 10,
-                  color: 'white',
-                  gravity: 0.1
-                }));
-              }
 
             setTimeout(() => {
               const invaderFound = grid.invaders.find(
@@ -338,6 +329,22 @@ function animate() {
 
               // remove invader & projectile
               if (invaderFound && projectileFound) {
+                for (let i = 0; i < 15; i++) {
+                  particles.push(
+                    new Particle({
+                      position: {
+                        x: invader.position.x + invader.width / 2,
+                        y: invader.position.y + invader.height / 2
+                      },
+                      velocity: {
+                        x: (Math.random() - 0.5) * 2,
+                        y: (Math.random() - 0.5) * 2
+                      },
+                      radius: Math.random() * 3,
+                      color: '#BAA0DE',
+                    })
+                  );
+                }
                 grid.invaders.splice(i, 1);
                 projectiles.splice(j, 1);
                 if (grid.invaders.length > 0) {
