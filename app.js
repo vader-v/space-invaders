@@ -237,7 +237,7 @@ const keys = {
 let frames = 0;
 let randomInterval = Math.floor(Math.random() * 500) + 500;
 
-console.log(randomInterval);
+// console.log(randomInterval);
 function animate() {
   requestAnimationFrame(animate);
   c.fillStyle = 'black';
@@ -288,7 +288,6 @@ function animate() {
 
               // remove invader & projectile
               if (invaderFound && projectileFound) {
-                console.log('found');
                 grid.invaders.splice(i, 1);
                 projectiles.splice(j, 1);
                 if (grid.invaders.length > 0) {
@@ -321,13 +320,12 @@ function animate() {
       player.velocity.x = 0;
       player.rotation = 0;
     }
-    console.log(frames);
 
     if (frames % randomInterval === 0) {
       grids.push(new Grid());
       randomInterval = Math.floor(Math.random() * 500) + 500;
       frames = 0;
-      console.log(randomInterval, 'randomInterval');
+      // console.log(randomInterval, 'randomInterval');
     }
   frames++;
 }
@@ -337,15 +335,15 @@ animate();
 addEventListener('keydown', ({ key }) => {
   switch (key) {
     case 'a':
-      console.log('left');
+      // console.log('left');
       keys.a.pressed = true;
       break;
     case 'd':
-      console.log('right');
+      // console.log('right');
       keys.d.pressed = true;
       break;
     case ' ':
-      console.log('shoot');
+      // console.log('shoot');
       projectiles.push(new Projectile({
           position: {
             x: player.position.x + player.width / 2,
