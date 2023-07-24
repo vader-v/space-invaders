@@ -217,10 +217,35 @@ class Grid {
     }
   }
 
+class Particle {
+  constructor({ position, velocity, radius, color, gravity }) {
+    this.position = position
+    this.velocity = velocity;
+
+    this.radius = radius
+    this.color = color
+  }
+
+  draw() {
+    c.beginPath();
+    c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+    c.fillStyle = this.color;
+    c.fill()
+    c.closePath();
+  }
+
+  update() {
+    this.draw();
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
+  }
+}
+
 const player = new Player();
 const projectiles = [];
 const grids = []
 const invaderProjectiles = [];
+const particles = [];
 
 const keys = {
   a: {
@@ -243,6 +268,13 @@ function animate() {
   c.fillStyle = 'black';
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.update();
+  particles.forEach((particle, index) => {
+    if (particle.alpha <= 0) {
+      setTimeout(() => {
+      particles.splice(index, 1);
+      }, 0);
+    } else particle.update();
+  });
   invaderProjectiles.forEach((invaderProjectile, index) => {
     if (invaderProjectile.position.y + invaderProjectile.height >= canvas.height) {
       setTimeout(() => {
@@ -271,13 +303,31 @@ function animate() {
       grid.invaders[Math.floor(Math.random() * grid.invaders.length)].shoot(invaderProjectiles);
     }
       grid.invaders.forEach((invader, i) => {
-        invader.update({velocity: grid.velocity});
+        invader.update({ velocity: grid.velocity });
+
+        // projectile collision
         projectiles.forEach((projectile, j) => {
-          if(projectile.position.y - projectile.radius <= invader.position.y + invader.height &&
+          if (projectile.position.y - projectile.radius <= invader.position.y + invader.height &&
             projectile.position.x + projectile.radius >= invader.position.x &&
             projectile.position.x - projectile.radius <= invader.position.x + invader.width &&
             projectile.position.y + projectile.radius >= invader.position.y
             ) {
+              for (let i = 0; i < 15; i++) {
+                particles.push(new Particle({
+                  position: {
+                    x: invader.position.x + invader.width / 2,
+                    y: invader.position.y + invader.height / 2
+                  },
+                  velocity: {
+                    x: 2,
+                    y: 2
+                  },
+                  radius: 10,
+                  color: 'white',
+                  gravity: 0.1
+                }));
+              }
+
             setTimeout(() => {
               const invaderFound = grid.invaders.find(
                 (invader2) => invader2 === invader
