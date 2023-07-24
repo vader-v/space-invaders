@@ -160,17 +160,26 @@ class Grid {
     }
   }
 
-  update() {
-    this.position.x += this.velocity.x;
-    this.position.y += this.velocity.y;
+    update() {
+      this.position.x += this.velocity.x;
+      this.position.y += this.velocity.y;
+  
+      const rightmostPosition = this.position.x + this.width;
+      const leftmostPosition = this.position.x;
+      
+      this.velocity.y = 0;
+      if (rightmostPosition >= canvas.width || leftmostPosition <= 0) {
+        this.velocity.x = -this.velocity.x;
+        this.velocity.y = 30;
 
-    this.velocity.y = 0;
-    if (this.position.x + this.width >= canvas.width || this.position.x <= 0) {
-      this.velocity.x = -this.velocity.x;
-      this.velocity.y = 30;
+        if (rightmostPosition >= canvas.width) {
+          this.position.x = canvas.width - this.width;
+        } else if (leftmostPosition <= 0) {
+          this.position.x = 0;
+        }
+      }
     }
   }
-}
 
 const player = new Player();
 const projectiles = [];
@@ -217,8 +226,29 @@ function animate() {
           );
           if (distance - invader.width / 2 - projectile.radius < 1) {
             setTimeout(() => {
-              grid.invaders.splice(i, 1);
-              projectiles.splice(j, 1);
+              const invaderFound = grid.invaders.find(invader2 => 
+                invader2 === invader
+              )
+              const projectileFound = projectiles.find(projectile2 => {
+                return projectile2 === projectile;
+
+              })
+              if (invaderFound && projectileFound) {
+
+                grid.invaders.splice(i, 1);
+                projectiles.splice(j, 1);
+              }
+              if (grid.invaders.length > 0) {
+                let minX = grid.invaders[0].position.x;
+                let maxX = grid.invaders[0].position.x;
+          
+                grid.invaders.forEach(invader => {
+                  if (invader.position.x < minX) minX = invader.position.x;
+                  if (invader.position.x > maxX) maxX = invader.position.x;
+                });
+          
+                grid.width = maxX - minX + grid.invaders[0].width;
+              }
             }, 0);
           }
         }
