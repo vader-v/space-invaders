@@ -208,10 +208,22 @@ function animate() {
 
   grids.forEach(grid => {
     grid.update();
-      grid.invaders.forEach(invader => {
+      grid.invaders.forEach((invader, i) => {
         invader.update({velocity: grid.velocity});
-      }
-    )
+        projectiles.forEach((projectile, j) => {
+          const distance = Math.hypot(
+            invader.position.x - projectile.position.x,
+            invader.position.y - projectile.position.y
+          );
+          if (distance - invader.width / 2 - projectile.radius < 1) {
+            setTimeout(() => {
+              grid.invaders.splice(i, 1);
+              projectiles.splice(j, 1);
+            }, 0);
+          }
+        }
+      );
+    });
   });
 
 
@@ -230,6 +242,7 @@ function animate() {
   if (frames % randomInterval === 0) {
     grids.push(new Grid());
     randomInterval = Math.floor(Math.random() * 500) + 500;
+    frames = 0;
     console.log(randomInterval, 'randomInterval');
   }
 frames++;
@@ -237,7 +250,7 @@ frames++;
 
 animate();
 
-addEventListener('keydown', ({key}) => {
+addEventListener('keydown', ({ key }) => {
   switch (key) {
     case 'a':
       console.log('left');
