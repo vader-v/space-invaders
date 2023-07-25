@@ -103,9 +103,12 @@ class InvaderProjectile {
   }
 
   update() {
-    this.draw();
-    this.position.x += this.velocity.x;
-    this.position.y += this.velocity.y;
+    if (this.position && this.velocity) {
+
+      this.draw();
+      this.position.x += this.velocity.x;
+      this.position.y += this.velocity.y;
+    }
   }
 
 }
@@ -216,6 +219,10 @@ class Grid {
         } else if (leftmostPosition <= 0) {
           this.position.x = 0;
         }
+      }
+      const gridIndex = grids.indexOf(this);
+      if (gridIndex !== -1 && this.invaders.length === 0) {
+        grids.splice(gridIndex, 1);
       }
     }
   }
@@ -340,8 +347,10 @@ function animate() {
       setTimeout(() => {
         invaderProjectiles.splice(index, 1);
       }, 0);
-    } else invaderProjectile.update();
-    
+    } else if (invaderProjectile.position && invaderProjectile.velocity) {
+      invaderProjectile.update();
+    }
+
     // projectile collision for player
     if (invaderProjectile.position.y + invaderProjectile.height >= player.position.y && invaderProjectile.position.x + invaderProjectile.width >= player.position.x && invaderProjectile.position.x <= player.position.x + player.width) {
       console.log('You died')
