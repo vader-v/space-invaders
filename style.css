@@ -1,10 +1,14 @@
 body {
   margin: 0;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
 }
 
 p {
-  position: fixed;
+  position: absolute;
   z-index: 10;
   color: #ffffff;
   left: 30px;
@@ -12,4 +16,8 @@ p {
   margin: 0;
   font-family: sans-serif;
   font-size: 16px;
+}
+
+div {
+  position: relative;
 }
