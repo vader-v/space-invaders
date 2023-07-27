@@ -2,8 +2,8 @@ const scoreEl = document.querySelector('#scoreEl');
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
 
-canvas.width = 1024;
-canvas.height = 576;
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
 class Player {
     constructor() {
@@ -183,7 +183,10 @@ class Grid {
 
     this.invaders = []
 
-    const columns = Math.floor(Math.random() * 10 + 5)
+    const screenWidthThreshold = 1000;
+    const columnsRatio = 0.02;
+
+    const columns = Math.max(4, Math.floor(canvas.width * columnsRatio));
     const rows = Math.floor(Math.random() * 5 + 2)
 
     this.width = columns * 30;
@@ -391,11 +394,14 @@ function animate() {
 
         // projectile collision
         projectiles.forEach((projectile, j) => {
-          if (projectile.position.y - projectile.radius <= invader.position.y + invader.height &&
+          if (
+            invader.position &&
+            projectile.position &&
+            projectile.position.y - projectile.radius <= invader.position.y + invader.height &&
             projectile.position.x + projectile.radius >= invader.position.x &&
             projectile.position.x - projectile.radius <= invader.position.x + invader.width &&
             projectile.position.y + projectile.radius >= invader.position.y
-            ) {
+          ) {
 
             setTimeout(() => {
               const invaderFound = grid.invaders.find(
